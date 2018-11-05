@@ -85,13 +85,11 @@ if (!adaptivequiz_allowed_attempt($adaptivequiz->attempts, $count)) {
 $adaptiveattempt = new adaptiveattempt($adaptivequiz, $USER->id);
 $attemptstatus = $adaptiveattempt->start_attempt();
 $algo = new stdClass();
-//$nextdiff = null;
-//$standarderror = 0.0;
-//$message = '';
 
-// If uniqueid is not empty the process respones.
+
+// ...If uniqueid is not empty the process respones.
 if (!empty($uniqueid) && confirm_sesskey()) {
-    // Check if the uniqueid belongs to the same attempt record the user is currently using.
+    // ...Check if the uniqueid belongs to the same attempt record the user is currently using.
     $attemptrec = $adaptiveattempt->get_attempt();
 
     if (!adaptivequiz_uniqueid_part_of_attempt($uniqueid, $cm->instance, $USER->id)) {
@@ -106,10 +104,9 @@ if (!empty($uniqueid) && confirm_sesskey()) {
         // Load the user's current usage from the DB.
         $quba = question_engine::load_questions_usage_by_activity((int) $uniqueid);
 
-        //condition-immediate feedback - submit="chek"
-        //condition-deferred feedback - submit="next_question"
-        //immediate feedback only
-        if (($adaptivequiz->preferredbehaviour=='deferredfeedback')||($adaptivequiz->preferredbehaviour=='immediatefeedback' && $nextquestion =='')){
+        if (($adaptivequiz->preferredbehaviour == 'deferredfeedback')
+         || ($adaptivequiz->preferredbehaviour == 'immediatefeedback'
+         && $nextquestion == '')) {
             // Update the actions done to the question.
             $quba->process_all_actions($time);
             // Finish the grade attempt at the question.
@@ -118,9 +115,8 @@ if (!empty($uniqueid) && confirm_sesskey()) {
             question_engine::save_questions_usage_by_activity($quba);
         }
 
-        //condition-immediate feedback - submit="next_question"
-        //condition-deferred feedback - submit="next_question"
-        if (!empty($difflevel)&&(($adaptivequiz->preferredbehaviour=='deferredfeedback')||($adaptivequiz->preferredbehaviour=='immediatefeedback' && $nextquestion <>''))) {
+        if (!empty($difflevel) && (($adaptivequiz->preferredbehaviour == 'deferredfeedback')
+         || ($adaptivequiz->preferredbehaviour == 'immediatefeedback' && $nextquestion <> ''))) {
             // Check if the minimum number of attempts have been reached.
             $minattemptreached = adaptivequiz_min_attempts_reached($uniqueid, $cm->instance, $USER->id);
             // Create an instance of the CAT algo class.
@@ -148,8 +144,6 @@ if (!empty($uniqueid) && confirm_sesskey()) {
             if (!empty($message)) {
 
                 $standarderror = $algo->get_standarderror();
-                // Set the attempt to complete, update the standard error and attempt message, then redirect the user to the
-                // attempt finished page.
                 adaptivequiz_complete_attempt($uniqueid, $cm->instance, $USER->id, $standarderror, $message);
 
                 $param = array('cmid' => $cm->id, 'id' => $cm->instance, 'uattid' => $uniqueid);
@@ -184,10 +178,8 @@ if (!empty($uniqueid) && confirm_sesskey()) {
 $adaptivequiz->context = $context;
 $adaptivequiz->cm = $cm;
 
-//condition-immediate feedback - submit="next_question"
-//condition-deferred feedback - submit="next_question"
-if (($adaptivequiz->preferredbehaviour=='deferredfeedback')||($adaptivequiz->preferredbehaviour=='immediatefeedback' && $nextquestion <>'')) {
-        
+if (($adaptivequiz->preferredbehaviour == 'deferredfeedback')
+ || ($adaptivequiz->preferredbehaviour == 'immediatefeedback' && $nextquestion <> '')) {
     // If value is null then set the difficulty level to the starting level for the attempt.
     if (!is_null($nextdiff)) {
         $adaptiveattempt->set_level((int) $nextdiff);
@@ -195,8 +187,6 @@ if (($adaptivequiz->preferredbehaviour=='deferredfeedback')||($adaptivequiz->pre
         $adaptiveattempt->set_level((int) $adaptivequiz->startinglevel);
     }
 
-    //condition-immediate feedback - submit="next_question"
-    //condition-deferred feedback - submit="next_question"
     // If we have a previous difficulty level, pass that off to the attempt so that it
     // can modify the next-question search process based on this level.
     if (isset($difflevel) && !is_null($difflevel)) {
@@ -210,8 +200,8 @@ if (($adaptivequiz->preferredbehaviour=='deferredfeedback')||($adaptivequiz->pre
         // Retrieve the most recent status message for the attempt.
         $message = $adaptiveattempt->get_status();
 
-        // Set the attempt to complete, update the standard error and attempt message, then redirect the user to the attempt-finished
-        // page.
+        /* Set the attempt to complete, update the standard error and attempt message,
+        then redirect the user to the attempt-finished page.*/
         if ($algo instanceof catalgo) {
             $standarderror = $algo->get_standarderror();
         }
@@ -226,11 +216,12 @@ if (($adaptivequiz->preferredbehaviour=='deferredfeedback')||($adaptivequiz->pre
 }
 
 // Redirect back to the attempt page.
-if ($adaptivequiz->preferredbehaviour=='immediatefeedback' &&$nextquestion =='') {
-    $isreview = 1;//re-visit previous question to show results
+if ($adaptivequiz->preferredbehaviour == 'immediatefeedback' && $nextquestion == '') {
+    $isreview = 1; // ...re-visit previous question to show results.
 } else {
-    $isreview = 0;//go to the next question
+    $isreview = 0; // ...go to the next question.
 }
-$param = array('cmid' => $cm->id, 'attid' => $adaptiveattempt->get_id(), 'isreview' =>$isreview);
+
+$param = array('cmid' => $cm->id, 'attid' => $adaptiveattempt->get_id(), 'isreview' => $isreview);
 $url = new moodle_url('/mod/adaptivequiz/attempt.php', $param);
 redirect($url);
