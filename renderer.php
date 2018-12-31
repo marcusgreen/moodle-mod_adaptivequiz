@@ -475,13 +475,11 @@ class mod_adaptivequiz_renderer extends plugin_renderer_base {
         /* Determine the next sorting direction and icon to display */
         switch ($sortdir) {
             case 'ASC':
-                $imageparam = array('src' => $OUTPUT->pix_url('t/down'), 'alt' => '');
-                $columnicon = html_writer::empty_tag('img', $imageparam);
+                $columnicon = $OUTPUT->pix_icon('t/down', '');
                 $newsortdir = 'DESC';
                 break;
             default:
-                $imageparam = array('src' => $OUTPUT->pix_url('t/up'), 'alt' => '');
-                $columnicon = html_writer::empty_tag('img', $imageparam);
+                $columnicon = $OUTPUT->pix_icon('t/up','');
                 $newsortdir = 'ASC';
                 break;
         }
